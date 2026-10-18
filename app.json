@@ -8,7 +8,8 @@
     "scheme": "mynum",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.mynum.watertracker"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,6 +18,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "com.mynum.watertracker",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -28,15 +30,43 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#4FC3F7",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      "expo-sqlite",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "WaterTracker",
+              "label": "MyNum Water Tracker",
+              "minWidth": "250dp",
+              "minHeight": "120dp",
+              "targetCellWidth": 3,
+              "targetCellHeight": 2,
+              "description": "Track your daily water intake with a single tap",
+              "updatePeriodMillis": 1800000
+            }
+          ]
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "6f9e0a0f-39e2-49fb-a7fa-cab36a19bdc5"
+      }
     }
   }
 }
