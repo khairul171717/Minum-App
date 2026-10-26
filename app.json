@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "MyNum",
+    "name": "Minum",
     "slug": "MyNum",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -42,7 +42,7 @@
           "widgets": [
             {
               "name": "WaterTracker",
-              "label": "MyNum Water Tracker",
+              "label": "Minum Water Tracker",
               "minWidth": "250dp",
               "minHeight": "120dp",
               "targetCellWidth": 3,

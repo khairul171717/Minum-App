@@ -59,7 +59,7 @@ export function WaterWidget({ currentMl, goalMl }: WaterWidgetProps) {
             style={{ width: 18, height: 18, marginRight: 6 }}
           />
           <TextWidget
-            text="MyNum"
+            text="Minum"
             style={{
               fontSize: 15,
               color: '#0288D1',

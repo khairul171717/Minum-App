@@ -248,7 +248,7 @@ export default function SettingsScreen() {
             style={styles.footer}
           >
             <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-              MyNum v1.0.0
+              Minum v1.0.0
             </Text>
             <View style={styles.footerHeartRow}>
               <Text style={[styles.footerText, { color: colors.textSecondary }]}>

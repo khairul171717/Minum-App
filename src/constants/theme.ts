@@ -1,5 +1,5 @@
 /**
- * MyNum Water Tracker - Theme Constants
+ * Minum Water Tracker - Theme Constants
  * Fresh water-themed color palette with light and dark mode support.
  */
 import { Platform } from 'react-native';

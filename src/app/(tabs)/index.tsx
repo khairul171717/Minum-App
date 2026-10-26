@@ -72,7 +72,7 @@ export default function HomeScreen() {
               <View style={styles.brandRow}>
                 <WaterDropIcon size={28} />
                 <Text style={[styles.appName, { color: colors.text }]}>
-                  MyNum
+                  Minum
                 </Text>
               </View>
             </View>
