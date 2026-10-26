@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Platform, AppRegistry } from 'react-native';
 
 if (
@@ -6,9 +7,12 @@ if (
 ) {
   try {
     const { registerWidgetTaskHandler } = require('react-native-android-widget');
-    const { widgetTaskHandler } = require('@/widgets/widget-task-handler');
+    const { widgetTaskHandler } = require('./src/widgets/widget-task-handler');
     registerWidgetTaskHandler(widgetTaskHandler);
   } catch (error) {
     console.warn('Failed to register widget task handler:', error);
   }
 }
+
+// Expo Router entry must be imported after background task registrations
+import 'expo-router/entry';
