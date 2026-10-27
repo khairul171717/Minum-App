@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -6,7 +5,6 @@ import Animated, {
   withSpring,
   withSequence,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
 import { WaterColors, BorderRadius, Spacing, FontSize } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -33,7 +31,7 @@ export function GlassButton({
   const scale = useSharedValue(1);
   const rippleOpacity = useSharedValue(0);
   const splashY = useSharedValue(0);
-  const isAnimating = useRef(false);
+  const isAnimating = useSharedValue(false);
 
   const dimensions = {
     small: { container: 76, iconSize: 40, text: FontSize.xs },
@@ -45,8 +43,8 @@ export function GlassButton({
   const glassType = amount_ml <= 150 ? 150 : amount_ml >= 500 ? 500 : 250;
 
   const handlePress = () => {
-    if (isAnimating.current) return;
-    isAnimating.current = true;
+    if (isAnimating.value) return;
+    isAnimating.value = true;
 
     // Haptic feedback
     try {
@@ -59,8 +57,11 @@ export function GlassButton({
     scale.value = withSequence(
       withSpring(0.85, { damping: 10, stiffness: 400 }),
       withSpring(1.15, { damping: 8, stiffness: 300 }),
-      withSpring(1, { damping: 12, stiffness: 200 }, () => {
-        isAnimating.current = false;
+      withSpring(1, { damping: 12, stiffness: 200 }, (finished) => {
+        'worklet';
+        if (finished) {
+          isAnimating.value = false;
+        }
       })
     );
 
@@ -76,7 +77,7 @@ export function GlassButton({
       withTiming(0, { duration: 250 })
     );
 
-    runOnJS(onPress)(amount_ml);
+    onPress(amount_ml);
   };
 
   const animatedStyle = useAnimatedStyle(() => ({

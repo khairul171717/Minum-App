@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+import 'react-native-gesture-handler';
 import { Platform, AppRegistry } from 'react-native';
 
 if (

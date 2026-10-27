@@ -38,7 +38,7 @@ export function WaterProgress({
   useEffect(() => {
     progress.value = withTiming(percentage, {
       duration: 1200,
-      easing: Easing.bezierFn(0.25, 0.1, 0.25, 1),
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
   }, [percentage, progress]);
 
