@@ -44,8 +44,17 @@ function BarItem({
     height: height.value,
   }));
 
-  const date = new Date(stat.date);
-  const dayName = DAY_NAMES[date.getDay()];
+  let dayName = '';
+  try {
+    const parts = (stat.date || '').split('-').map(Number);
+    const date =
+      parts.length === 3
+        ? new Date(parts[0], parts[1] - 1, parts[2])
+        : new Date(stat.date);
+    dayName = !isNaN(date.getTime()) ? DAY_NAMES[date.getDay()] : '-';
+  } catch {
+    dayName = '-';
+  }
 
   return (
     <View style={styles.barWrapper}>
@@ -78,10 +87,11 @@ function BarItem({
   );
 }
 
-export function WeeklyChart({ stats, dailyGoal }: WeeklyChartProps) {
+export function WeeklyChart({ stats = [], dailyGoal = 2000 }: WeeklyChartProps) {
   const colors = useThemeColor();
   const maxHeight = 120;
-  const maxValue = Math.max(...stats.map((s) => s.total_ml), dailyGoal);
+  const statAmounts = stats && stats.length > 0 ? stats.map((s) => s.total_ml || 0) : [0];
+  const maxValue = Math.max(...statAmounts, dailyGoal || 2000, 1);
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 

@@ -49,6 +49,48 @@ export function useSettings() {
     setSettings((prev) => ({ ...prev, glass_size_ml: value }));
   }, []);
 
+  const setWeight = useCallback(async (value: number) => {
+    await updateSetting('weight_kg', value);
+    setSettings((prev) => ({ ...prev, weight_kg: value }));
+  }, []);
+
+  const setActivityLevel = useCallback(
+    async (value: 'low' | 'normal' | 'high') => {
+      await updateSetting('activity_level', value);
+      setSettings((prev) => ({ ...prev, activity_level: value }));
+    },
+    []
+  );
+
+  const applyWeightCalculatedGoal = useCallback(
+    async (
+      weightKg: number,
+      activityLevel: 'low' | 'normal' | 'high' = 'normal'
+    ) => {
+      const multiplier =
+        activityLevel === 'low' ? 30 : activityLevel === 'high' ? 40 : 35;
+      const rawGoal = Math.round(weightKg * multiplier);
+      const roundedGoal = Math.round(rawGoal / 50) * 50;
+      const clampedGoal = Math.max(1000, Math.min(roundedGoal, 5000));
+
+      await Promise.all([
+        updateSetting('weight_kg', weightKg),
+        updateSetting('activity_level', activityLevel),
+        updateSetting('daily_goal_ml', clampedGoal),
+      ]);
+
+      setSettings((prev) => ({
+        ...prev,
+        weight_kg: weightKg,
+        activity_level: activityLevel,
+        daily_goal_ml: clampedGoal,
+      }));
+
+      return clampedGoal;
+    },
+    []
+  );
+
   const resetData = useCallback(async () => {
     await resetAllData();
   }, []);
@@ -58,6 +100,9 @@ export function useSettings() {
     loading,
     setDailyGoal,
     setGlassSize,
+    setWeight,
+    setActivityLevel,
+    applyWeightCalculatedGoal,
     resetData,
     refresh,
   };

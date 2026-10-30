@@ -14,6 +14,8 @@ export interface DailyStats {
 export interface UserSettings {
   daily_goal_ml: number;
   glass_size_ml: number;
+  weight_kg?: number;
+  activity_level?: 'low' | 'normal' | 'high';
 }
 
 export type GlassSize = {
@@ -31,4 +33,6 @@ export const DEFAULT_GLASS_SIZES: GlassSize[] = [
 export const DEFAULT_SETTINGS: UserSettings = {
   daily_goal_ml: 2000,
   glass_size_ml: 250,
+  weight_kg: 60,
+  activity_level: 'normal',
 };

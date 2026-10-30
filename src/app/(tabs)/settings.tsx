@@ -5,6 +5,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Spacing, FontSize, WaterColors, BorderRadius } from '@/constants/theme';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { WeightWaterCalculator } from '@/components/WeightWaterCalculator';
 
 const GOAL_OPTIONS = [1500, 2000, 2500, 3000, 3500, 4000];
 const GLASS_OPTIONS = [150, 200, 250, 300, 350, 500];
@@ -19,7 +20,13 @@ const TIPS = [
 
 export default function SettingsScreen() {
   const colors = useThemeColor();
-  const { settings, setDailyGoal, setGlassSize, resetData } = useSettings();
+  const {
+    settings,
+    setDailyGoal,
+    setGlassSize,
+    applyWeightCalculatedGoal,
+    resetData,
+  } = useSettings();
 
   const handleResetData = () => {
     Alert.alert(
@@ -64,6 +71,17 @@ export default function SettingsScreen() {
             <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               Sesuaikan target dan preferensi hidrasimu
             </Text>
+          </Animated.View>
+
+          {/* Kalkulator Kebutuhan Air dari Berat Badan */}
+          <Animated.View entering={FadeInDown.delay(150).duration(400)}>
+            <WeightWaterCalculator
+              key={`calc-${settings.weight_kg || 60}-${settings.activity_level || 'normal'}`}
+              currentWeightKg={settings.weight_kg}
+              currentActivityLevel={settings.activity_level}
+              currentDailyGoal={settings.daily_goal_ml}
+              onApplyGoal={applyWeightCalculatedGoal}
+            />
           </Animated.View>
 
           {/* Daily Goal */}

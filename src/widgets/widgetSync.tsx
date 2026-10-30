@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 "use no memo";
 
 /**
@@ -9,7 +10,6 @@
 
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { requestWidgetUpdate } from 'react-native-android-widget';
 import { Platform } from 'react-native';
 import { WaterWidget } from './WaterWidget';
 
@@ -26,9 +26,10 @@ export async function syncWidgetData(currentMl: number, goalMl: number) {
       [STORAGE_KEY_GOAL, String(goalMl)],
     ]);
 
-    // Request widget update on Android
+    // Request widget update on Android safely
     if (Platform.OS === 'android') {
       try {
+        const { requestWidgetUpdate } = require('react-native-android-widget');
         await requestWidgetUpdate({
           widgetName: 'WaterTracker',
           renderWidget: () => (
@@ -36,8 +37,8 @@ export async function syncWidgetData(currentMl: number, goalMl: number) {
           ),
         });
       } catch (e) {
-        // Widget might not be placed on home screen yet
-        console.log('Widget update request failed (widget may not be placed):', e);
+        // Widget might not be placed on home screen or module not available
+        console.log('Widget update request failed:', e);
       }
     }
   } catch (error) {
@@ -57,6 +58,7 @@ export async function resetWidgetData(goalMl: number = 2000) {
 
     if (Platform.OS === 'android') {
       try {
+        const { requestWidgetUpdate } = require('react-native-android-widget');
         await requestWidgetUpdate({
           widgetName: 'WaterTracker',
           renderWidget: () => (
@@ -71,3 +73,4 @@ export async function resetWidgetData(goalMl: number = 2000) {
     console.error('Failed to reset widget data:', error);
   }
 }
+

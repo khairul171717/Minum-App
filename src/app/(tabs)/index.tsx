@@ -92,7 +92,7 @@ export default function HomeScreen() {
                 color={WaterColors.primaryDark}
               />
               <Text style={[styles.targetText, { color: colors.text }]}>
-                {settings.daily_goal_ml}ml
+                {settings.daily_goal_ml || 2000}ml
               </Text>
             </View>
           </Animated.View>
@@ -104,7 +104,7 @@ export default function HomeScreen() {
           >
             <WaterProgress
               current={todayTotal}
-              goal={settings.daily_goal_ml}
+              goal={settings.daily_goal_ml || 2000}
             />
           </Animated.View>
 

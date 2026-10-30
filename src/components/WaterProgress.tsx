@@ -24,16 +24,21 @@ interface WaterProgressProps {
 }
 
 export function WaterProgress({
-  current,
-  goal,
+  current = 0,
+  goal = 2000,
   size = 220,
   strokeWidth = 14,
 }: WaterProgressProps) {
   const colors = useThemeColor();
   const progress = useSharedValue(0);
-  const radius = (size - strokeWidth) / 2;
+  const radius = Math.max((size - strokeWidth) / 2, 1);
   const circumference = 2 * Math.PI * radius;
-  const percentage = Math.min(current / goal, 1);
+
+  const safeGoal = Math.max(goal || 2000, 1);
+  const safeCurrent = Math.max(current || 0, 0);
+  const percentage = Math.min(Math.max(safeCurrent / safeGoal, 0), 1);
+  const displayPercentage = Math.round(percentage * 100);
+  const remaining = Math.max(safeGoal - safeCurrent, 0);
 
   useEffect(() => {
     progress.value = withTiming(percentage, {
@@ -42,27 +47,33 @@ export function WaterProgress({
     });
   }, [percentage, progress]);
 
-  const animatedProps = useAnimatedProps(() => ({
-    strokeDashoffset: circumference * (1 - progress.value),
-  }));
-
-  const displayPercentage = Math.round(percentage * 100);
-  const remaining = Math.max(goal - current, 0);
+  const animatedProps = useAnimatedProps(() => {
+    const safeVal = Math.min(Math.max(progress.value, 0), 1);
+    return {
+      strokeDashoffset: circumference * (1 - safeVal),
+    };
+  });
 
   const progressColor = useDerivedValue(() => {
+    const safeVal = Math.min(Math.max(progress.value, 0), 1);
     return interpolateColor(
-      progress.value,
+      safeVal,
       [0, 0.5, 0.75, 1],
-      [WaterColors.primary, WaterColors.accent, WaterColors.secondary, WaterColors.success]
+      [
+        WaterColors.primary,
+        WaterColors.accent,
+        WaterColors.secondary,
+        WaterColors.success,
+      ]
     );
   });
 
   const glowStyle = useAnimatedStyle(() => ({
     shadowColor: progressColor.value,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-    elevation: 8,
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 4,
   }));
 
   return (

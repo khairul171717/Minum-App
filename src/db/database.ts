@@ -2,13 +2,27 @@ import * as SQLite from 'expo-sqlite';
 
 const DB_NAME = 'mynum.db';
 
-let db: SQLite.SQLiteDatabase | null = null;
+let dbInstance: SQLite.SQLiteDatabase | null = null;
+let initPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (db) return db;
-  db = await SQLite.openDatabaseAsync(DB_NAME);
-  await initDatabase(db);
-  return db;
+  if (dbInstance) return dbInstance;
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
+    try {
+      const database = await SQLite.openDatabaseAsync(DB_NAME);
+      await initDatabase(database);
+      dbInstance = database;
+      return database;
+    } catch (error) {
+      console.error('Failed to initialize SQLite database:', error);
+      initPromise = null;
+      throw error;
+    }
+  })();
+
+  return initPromise;
 }
 
 async function initDatabase(database: SQLite.SQLiteDatabase): Promise<void> {
@@ -55,10 +69,16 @@ export function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-export function formatTime(isoString: string): string {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString('id-ID', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+export function formatTime(isoString?: string | null): string {
+  if (!isoString) return '--:--';
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '--:--';
+    return date.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return '--:--';
+  }
 }

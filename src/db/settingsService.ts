@@ -13,20 +13,33 @@ export async function getSettings(): Promise<UserSettings> {
   
   for (const row of rows) {
     if (row.key === 'daily_goal_ml') {
-      settings.daily_goal_ml = parseInt(row.value, 10);
+      const val = parseInt(row.value, 10);
+      if (!isNaN(val) && val > 0) settings.daily_goal_ml = val;
     } else if (row.key === 'glass_size_ml') {
-      settings.glass_size_ml = parseInt(row.value, 10);
+      const val = parseInt(row.value, 10);
+      if (!isNaN(val) && val > 0) settings.glass_size_ml = val;
+    } else if (row.key === 'weight_kg') {
+      const val = parseFloat(row.value);
+      if (!isNaN(val) && val > 0) settings.weight_kg = val;
+    } else if (row.key === 'activity_level') {
+      if (['low', 'normal', 'high'].includes(row.value)) {
+        settings.activity_level = row.value as 'low' | 'normal' | 'high';
+      }
     }
   }
   
   return settings;
 }
 
-export async function updateSetting(key: keyof UserSettings, value: number): Promise<void> {
+export async function updateSetting(
+  key: keyof UserSettings,
+  value: number | string
+): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
     'INSERT OR REPLACE INTO user_settings (key, value) VALUES (?, ?)',
-    key, String(value)
+    key,
+    String(value)
   );
 }
 

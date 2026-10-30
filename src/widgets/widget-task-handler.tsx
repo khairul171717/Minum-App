@@ -37,38 +37,44 @@ async function addWaterFromWidget(amount: number) {
 }
 
 export async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
-  if (props.widgetInfo.widgetName !== 'WaterTracker') {
-    return;
-  }
-
-  switch (props.widgetAction) {
-    case 'WIDGET_ADDED':
-    case 'WIDGET_UPDATE':
-    case 'WIDGET_RESIZED': {
-      const data = await getWidgetData();
-      props.renderWidget(
-        <WaterWidget currentMl={data.currentMl} goalMl={data.goalMl} />
-      );
-      break;
+  try {
+    if (!props?.widgetInfo || props.widgetInfo.widgetName !== 'WaterTracker') {
+      return;
     }
 
-    case 'WIDGET_CLICK': {
-      const clickData = props.clickActionData;
-      if (clickData?.action === 'add_water' && clickData?.amount) {
-        const amount = parseInt(String(clickData.amount), 10);
-        const newTotal = await addWaterFromWidget(amount);
-        const goalStr = await AsyncStorage.getItem(STORAGE_KEY_GOAL);
-        const goalMl = goalStr ? parseInt(goalStr, 10) : 2000;
-
+    switch (props.widgetAction) {
+      case 'WIDGET_ADDED':
+      case 'WIDGET_UPDATE':
+      case 'WIDGET_RESIZED': {
+        const data = await getWidgetData();
         props.renderWidget(
-          <WaterWidget currentMl={newTotal} goalMl={goalMl} />
+          <WaterWidget currentMl={data.currentMl} goalMl={data.goalMl} />
         );
+        break;
       }
-      break;
-    }
 
-    case 'WIDGET_DELETED':
-    default:
-      break;
+      case 'WIDGET_CLICK': {
+        const clickData = props.clickActionData;
+        if (clickData?.action === 'add_water' && clickData?.amount) {
+          const amount = parseInt(String(clickData.amount), 10) || 0;
+          if (amount > 0) {
+            const newTotal = await addWaterFromWidget(amount);
+            const goalStr = await AsyncStorage.getItem(STORAGE_KEY_GOAL);
+            const goalMl = goalStr ? parseInt(goalStr, 10) : 2000;
+
+            props.renderWidget(
+              <WaterWidget currentMl={newTotal} goalMl={goalMl} />
+            );
+          }
+        }
+        break;
+      }
+
+      case 'WIDGET_DELETED':
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error('Error in widgetTaskHandler:', error);
   }
 }
