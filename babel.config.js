@@ -3,8 +3,9 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      // react-native-reanimated/plugin wajib di paling akhir
-      'react-native-reanimated/plugin',
+      // react-native-worklets/plugin wajib di paling akhir untuk Reanimated v4
+      'react-native-worklets/plugin',
     ],
   };
 };
+
